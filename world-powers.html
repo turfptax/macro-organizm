@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Nations</title>
+<meta name="description" content="A curated snapshot of selected states and the security, hostility, economic and diplomatic ties between them, coded from public reporting and primary documents, with dates, evidence grades and sources.">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="assets/macro.css?v=20261024">
+<link rel="stylesheet" href="assets/graph.css?v=20261024">
+<script src="assets/shell.js?v=20261024"></script><!-- in head so a saved theme is applied before the first paint -->
+<!--
+  Palette checks (dataviz skill, scripts/validate_palette.js). No new colour values: every fill and line is a macro.css token.
+
+  Relationship layers (line colour plus dash, never colour alone): security = blue, solid; hostility = orange, dash-dot;
+  economic = neutral, long dash; diplomatic = aqua, dotted.
+    dark on #1a1a19:  CVD 15.7 PASS, normal 22.6 PASS, contrast PASS (all >= 3:1)
+    light on #fcfcfb: CVD 18.3 PASS, normal 24.3 PASS, contrast PASS
+  The neutral line is a gray by design, so the lightness band and chroma floor checks do not apply to it; its identity
+  is the long dash, the legend and the layer named in every detail row, table row and tooltip.
+
+  Entity colours (US blue, China aqua, UK orange, EU magenta, Japan green, Russia magenta) are the shared tokens used on
+  Money Over Time and Money Flow; every other state is neutral. Over five hues the CVD check fails (magenta against aqua
+  under deutan), as the skill documents for categorical sets this size, so colour is never what names a state:
+  every node has its name in the key, detail, table and tooltip, labels on the larger nodes, and its own shape and fill
+  by kind (state circle, organisation of states square, self-governing territory hollow circle). EU and Russia share
+  magenta in the shared tokens; the EU is a square, Russia a circle.
+-->
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to the page</a>
+
+<header class="appbar">
+  <a class="brand" href="monetary-history.html"><span class="brand-dot" aria-hidden="true"></span>Macro Organizm</a>
+  <h1 class="page-title">Nations</h1>
+  <nav class="appnav" aria-label="Pages">
+    <a href="monetary-history.html">Money Over Time</a>
+    <a href="money-flow.html">Money Flow</a>
+    <a href="world-powers.html" aria-current="page">Nations</a>
+    <a href="power-structure.html">Power Structure</a>
+  </nav>
+  <span class="spacer"></span>
+  <button class="btn" id="theme-btn" type="button" aria-label="Switch theme">Theme</button>
+</header>
+
+<noscript>
+  <div class="load-error"><h2>JavaScript is required</h2><p>This page draws its graph in the browser.</p></div>
+</noscript>
+
+<div id="load-error" class="load-error" role="alert" hidden>
+  <h2 id="load-error-title">The page could not load</h2>
+  <p id="load-error-detail"></p>
+</div>
+
+<div id="app"><div id="graph-root"></div></div>
+
+<div id="dialog-root"></div>
+
+<script id="d3-script" src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="data/world-powers.js?v=20261024"></script>
+<script src="assets/graph-model.js?v=20261024"></script>
+<script src="assets/ui.js?v=20261024"></script>
+<script src="assets/graph.js?v=20261024"></script>
+<script src="assets/world-powers.js?v=20261024"></script>
+</body>
+</html>

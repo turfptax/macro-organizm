@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "world-powers",
+      "runtimeExecutable": "C:/Program Files/nodejs/npx.cmd",
+      "runtimeArgs": ["serve", "-l", "3456", "-s", "."],
+      "port": 3456
+    },
+    {
+      "name": "macro-static",
+      "runtimeExecutable": "C:/Users/User/AppData/Local/Programs/Python/Python312/python.exe",
+      "runtimeArgs": ["-m", "http.server", "3457", "--bind", "127.0.0.1"],
+      "port": 3457
+    }
+  ]
+}

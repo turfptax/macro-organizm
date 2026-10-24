@@ -1,0 +1,245 @@
+/* Graph pages (Nations, Power Structure): rules for assets/graph.js. Loaded after macro.css, which holds the tokens and the shared
+   components. Every class starts with gr-. Colours come from the shared tokens, so a theme change needs no redraw. Identity is never
+   colour alone: shape and fill tell types apart, dash and arrowheads tell relations apart, and every mark has a text twin. */
+
+/* page frame: graph and tools on the left, details on the right, notes below the graph on the left */
+.gr-shell {
+  grid-template-columns: minmax(0, 1fr) 360px;
+  grid-template-areas: "main aside" "panels aside";
+  grid-template-rows: auto 1fr;
+}
+.gr-main { grid-area: main; }
+.gr-detail { grid-area: aside; }
+.gr-panels { grid-area: panels; }
+/* a jump to these (the details after a click, "Back to the graph") stops below the sticky app bar; so does a focused control
+   that scrolls into view, which the sticky bar would otherwise cover (not on phones, where the bar scrolls away) */
+html { scroll-padding-top: calc(var(--appbar-h, 48px) + 12px); }
+.gr-detail, .gr-stagewrap, .gr-tables { scroll-margin-top: calc(var(--appbar-h, 48px) + 8px); }
+.gr-claim { max-width: 72em; font-size: 14px; line-height: 1.55; color: var(--ink-2); }
+.gr-claim[hidden] { display: none; }
+.gr-notices { display: flex; flex-direction: column; gap: 8px; }
+.gr-notices:empty { display: none; }
+
+/* toolbar */
+.gr-findtool { flex: 1 1 260px; max-width: 440px; }
+.gr-search { width: 100%; }
+.gr-searchhint { min-height: 1em; }
+.gr-yearrow { display: flex; align-items: center; gap: 10px; }
+.gr-yearrow input[type="range"] { width: min(300px, 50vw); height: 28px; margin: 0; }
+.gr-yearout { min-width: 6.4em; font-weight: 700; color: var(--ink); }
+.gr-editrow .tool-actions, .gr-left { margin-left: 0; }
+
+/* legend */
+.gr-legend { align-items: flex-start; gap: 10px 22px; }
+/* All, None and Clear reach the 24px minimum target size (macro.css already makes them 32px on phones and touch screens) */
+@media (min-width: 640px) and (pointer: fine) {
+  .gr-legend .lgroup-head button { min-height: 24px; min-width: 24px; padding: 0 6px; }
+}
+.gr-kindlist { display: flex; flex-wrap: wrap; gap: 4px 18px; }
+.gr-kindrow { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink-2); }
+.gr-kindsvg { width: 36px; height: 14px; flex: none; overflow: visible; }
+.gr-kindkey { flex-direction: column; align-items: flex-start; }
+.gr-n { margin-left: 1px; font-size: 11px; color: var(--muted); }
+.gr-keydetails { flex: 1 1 100%; font-size: 13px; }
+.gr-keydetails summary { display: flex; align-items: center; min-height: 32px; cursor: pointer; color: var(--ink-2); }
+.gr-keybody { display: flex; flex-direction: column; gap: 8px; max-width: 64em; padding: 4px 0 6px; }
+.chip.gr-memchip[aria-pressed="false"] { background: var(--surface-2); border-style: solid; color: var(--ink-2); }
+.chip.gr-memchip[aria-pressed="false"] .key { opacity: 1; }
+.chip.gr-memchip[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--ink); }
+.chip.gr-memchip[aria-pressed="true"]::before { content: "\2713"; font-weight: 700; }
+.chip .key { width: 24px; height: 14px; }
+
+/* a visible marker on each disclosure summary, drawn with borders so it needs no glyph */
+.gr-filters > summary, .gr-keydetails > summary, .gr-newsrc > summary { gap: 8px; }
+.gr-filters > summary::before, .gr-keydetails > summary::before, .gr-newsrc > summary::before, .gr-psummary::before {
+  content: ""; flex: none; width: 0; height: 0; margin: 0 4px 0 2px;
+  border-style: solid; border-width: 5px 0 5px 7px; border-color: transparent transparent transparent var(--muted);
+  transition: transform 0.12s;
+}
+.gr-filters[open] > summary::before, .gr-keydetails[open] > summary::before, .gr-newsrc[open] > summary::before, .gr-panel[open] > .gr-psummary::before { transform: rotate(90deg); }
+.gr-psummary { list-style: none; display: flex; align-items: center; gap: 8px; }
+.gr-psummary::-webkit-details-marker, .gr-filters > summary::-webkit-details-marker { display: none; }
+
+/* the stage */
+.gr-stagewrap { position: relative; }
+.gr-stage {
+  position: relative; width: 100%; aspect-ratio: 16 / 10; min-height: 360px; max-height: 78vh;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+}
+@media (min-width: 640px) { .gr-tall .gr-stage { aspect-ratio: 4 / 3; } }
+.gr-stage:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+.gr-svg { display: block; width: 100%; height: 100%; touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab; }
+.gr-svg text { font-family: var(--font); }
+.gr-stagewrap .empty-msg { inset: 0; }
+.gr-zoomctl { position: absolute; top: 8px; right: 8px; z-index: 3; display: flex; flex-direction: column; gap: 4px; }
+.gr-zoomctl .btn { min-width: 36px; min-height: 36px; padding: 0 6px; font-size: 16px; line-height: 1; background: var(--raised); }
+.gr-zoomctl .btn:last-child { font-size: 12px; }
+.gr-hint { max-width: 72em; }
+.gr-nod3 { margin: 0; }
+
+.gr-off { display: none; }
+
+/* nodes */
+.gr-node { cursor: pointer; }
+.gr-shape { fill: var(--c); stroke: var(--surface); stroke-width: 1.5px; vector-effect: non-scaling-stroke; }
+.gr-shape.hollow { fill: var(--surface); stroke: var(--c); stroke-width: 2.5px; }
+.gr-hit { fill: transparent; stroke: transparent; stroke-width: 24px; vector-effect: non-scaling-stroke; pointer-events: all; }
+.gr-ring, .gr-mark, .gr-yours { display: none; fill: none; vector-effect: non-scaling-stroke; pointer-events: none; }
+.gr-node.is-sel .gr-ring { display: inline; stroke: var(--ink); stroke-width: 2.5px; }
+.gr-node.is-active .gr-ring { display: inline; stroke: var(--focus); stroke-width: 3px; stroke-dasharray: 5 3; }
+.gr-node.is-active.is-sel .gr-ring { stroke-dasharray: none; }
+.gr-node.is-match .gr-mark { display: inline; stroke: var(--accent); stroke-width: 2.5px; }
+.gr-node.is-member .gr-mark { display: inline; stroke: var(--ink); stroke-width: 2.5px; }
+.gr-node.is-yours .gr-yours { display: inline; stroke: var(--ink-2); stroke-width: 1.5px; stroke-dasharray: 3 3; }
+.gr-node.is-dim, .gr-edge.is-dim { opacity: 0.28; }
+
+/* edges: hue and dash say which relation; arrowheads say direction */
+.gr-line { fill: none; stroke: var(--c); stroke-width: 2px; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.gr-d-long { stroke-dasharray: 10 5; }
+.gr-d-short { stroke-dasharray: 5 4; }
+.gr-d-dot { stroke-dasharray: 1 5; }
+.gr-d-dashdot { stroke-dasharray: 10 4 1 4; }
+.gr-ehit { fill: none; stroke: transparent; stroke-width: 14px; vector-effect: non-scaling-stroke; pointer-events: stroke; cursor: pointer; }
+.gr-arrow { fill: var(--c); stroke: none; pointer-events: none; }
+/* kind of tie: a small shape on the middle of the line; your own edit: a dashed ring around the middle */
+.gr-kmark { fill: var(--c); stroke: var(--surface); stroke-width: 1.5px; vector-effect: non-scaling-stroke; pointer-events: none; }
+.gr-ymark { display: none; fill: none; stroke: var(--ink-2); stroke-width: 1.5px; stroke-dasharray: 3 3; vector-effect: non-scaling-stroke; pointer-events: none; }
+.gr-edge.is-yours .gr-ymark { display: inline; }
+.gr-edge.is-hl .gr-line { stroke-width: 3px; }
+.gr-edge.is-sel .gr-line { stroke-width: 4px; }
+.gr-q { fill: var(--ink); font-weight: 700; paint-order: stroke; stroke: var(--surface); stroke-width: 3px; pointer-events: none; }
+.gr-elabel { fill: var(--ink); paint-order: stroke; stroke: var(--surface); stroke-linejoin: round; pointer-events: none; }
+
+/* labels sit in screen space, so they keep their size at every zoom */
+.gr-label { font-size: 12px; fill: var(--ink); paint-order: stroke; stroke: var(--surface); stroke-width: 3px; stroke-linejoin: round; pointer-events: none; }
+.gr-label.is-bold { font-weight: 700; }
+.gr-label.is-dim { fill: var(--faint); }
+/* the light theme's faint ink is only 3.5:1 on the stage; dimmed names use the muted ink there (about 5.4:1) */
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .gr-label.is-dim { fill: var(--muted); } }
+:root[data-theme="light"] .gr-label.is-dim { fill: var(--muted); }
+
+/* detail panel */
+.gr-detail { padding: 14px 14px 16px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.gr-dhead { margin: 0; }
+.gr-back { align-self: flex-start; }
+.gr-dtitle { font-size: 18px; line-height: 1.25; font-weight: 700; overflow-wrap: anywhere; }
+.gr-badges { display: flex; flex-wrap: wrap; gap: 6px; }
+.gr-detail .badge { font-size: 12px; }
+.gr-catbadge { display: inline-flex; align-items: center; gap: 6px; }
+.gr-catbadge .key { width: 20px; height: 12px; flex: none; }
+.gr-grade-documented { border-style: solid; border-width: 2px; color: var(--ink); }
+.gr-grade-reported { border-style: dashed; color: var(--ink); }
+.gr-grade-alleged { border-style: dotted; border-width: 2px; color: var(--ink); }
+.gr-yoursbadge { border-style: dashed; color: var(--ink); }
+.gr-overdue { color: var(--ink); border-width: 2px; }
+.gr-detail .plain { margin: 0; }
+.gr-notes { white-space: pre-wrap; overflow-wrap: anywhere; }
+.gr-h3 { margin: 6px 0 0; font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+.gr-h4 { display: flex; align-items: center; gap: 8px; margin: 8px 0 2px; font-size: 13px; font-weight: 600; color: var(--ink); }
+.gr-h4 .key { width: 24px; height: 12px; flex: none; }
+.gr-count { font-weight: 500; letter-spacing: 0; text-transform: none; }
+.gr-sources { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--ink-2); }
+.gr-srcitem { overflow-wrap: anywhere; }
+.gr-srcmeta { color: var(--muted); font-size: 12px; }
+.gr-nosrc { margin: 0; }
+.gr-tiesec { display: flex; flex-direction: column; }
+.gr-ties { display: flex; flex-direction: column; }
+.gr-tie { padding: 4px 0 6px; border-bottom: 1px solid var(--grid); }
+.gr-tierow { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.gr-tiebtn {
+  flex: 1 1 auto; min-width: 0; min-height: 28px; padding: 3px 0; background: none; border: 0; border-radius: 4px;
+  color: var(--ink); text-align: left; font-size: 13px; line-height: 1.35; overflow-wrap: anywhere;
+}
+.gr-tiebtn:hover b { text-decoration: underline; }
+.gr-phrase { color: var(--ink-2); }
+.gr-tiedetail { flex: none; min-height: 26px; padding: 0 8px; font-size: 12px; }
+.gr-tiemeta { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; font-size: 12px; color: var(--ink-2); }
+.gr-tiesrc { min-width: 0; overflow-wrap: anywhere; }
+.gr-hiddennote { padding: 8px 10px; }
+.gr-editbtns, .gr-dactions { display: flex; flex-wrap: wrap; gap: 6px; }
+.gr-evsum { color: var(--muted); }
+
+/* notes under the graph */
+.gr-panels { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.gr-panel { padding: 0; }
+.gr-psummary { padding: 12px 16px; cursor: pointer; }
+.gr-ptitle { display: inline; font-size: 15px; font-weight: 700; }
+.gr-pbody { display: flex; flex-direction: column; gap: 8px; padding: 0 16px 16px; max-width: 78em; }
+.gr-plist { display: flex; flex-direction: column; gap: 4px; padding-left: 18px; list-style: disc; }
+.gr-gradedl { display: flex; flex-direction: column; gap: 6px; margin: 0; }
+.gr-gradedl > div { display: grid; grid-template-columns: 7.5em minmax(0, 1fr); gap: 10px; align-items: baseline; }
+.gr-gradedl dd { margin: 0; }
+.gr-claims { display: flex; flex-direction: column; gap: 12px; padding: 0; list-style: none; }
+.gr-claim-item { display: flex; flex-direction: column; gap: 4px; padding-bottom: 10px; border-bottom: 1px solid var(--grid); }
+.gr-claimhead { margin: 0; font-size: 14px; font-weight: 700; }
+.gr-verdict { align-self: flex-start; color: var(--ink); border-width: 2px; }
+.gr-claimsrc { margin: 0; font-size: 12px; line-height: 24px; color: var(--ink-2); }
+/* source links reach a 24px target without moving the lines around them */
+.gr-claimsrc a, .gr-sources a { padding: 4px 0; }
+.appbar .brand { min-height: 28px; }
+
+/* table twin */
+.gr-tables { display: flex; flex-direction: column; gap: 12px; }
+.gr-tableview { max-height: clamp(320px, 56vh, 640px); }
+.gr-rowbtn { padding: 2px 0; background: none; border: 0; color: var(--link); font: inherit; text-align: left; text-decoration: underline; text-underline-offset: 2px; }
+.gr-rowbtn:hover { text-decoration-thickness: 2px; }
+
+/* forms in dialogs */
+.gr-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 16px; margin-top: 12px; }
+.gr-form > .field-error, .gr-form > .gr-fieldset, .gr-form > .dactions, .gr-form > .gr-wide, .gr-form > .gr-newsrc { grid-column: 1 / -1; }
+.gr-fieldset { margin: 0; padding: 10px 12px 12px; border: 1px solid var(--border); border-radius: 8px; min-width: 0; }
+.gr-fieldset legend { padding: 0 6px; }
+.gr-checks { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.gr-check { display: flex; align-items: center; gap: 8px; min-height: 28px; font-size: 13px; color: var(--ink-2); }
+.gr-check input { width: 16px; height: 16px; margin: 0; accent-color: var(--accent); }
+.gr-srcedit { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+.gr-srcrow { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) auto; gap: 8px; align-items: center; }
+.gr-srctitle { font-size: 13px; color: var(--ink); overflow-wrap: anywhere; }
+.gr-srcadd { display: flex; gap: 8px; }
+.gr-srcadd .input { flex: 1 1 auto; min-width: 0; }
+.gr-newsrc { margin-top: 8px; font-size: 13px; }
+.gr-newsrc summary { min-height: 32px; display: flex; align-items: center; cursor: pointer; color: var(--ink-2); }
+.gr-newsrcbody { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 14px; padding: 8px 0 0; }
+.gr-newsrcbody .field-error, .gr-newsrcbody > .btn { grid-column: 1 / -1; justify-self: start; }
+.dialog .gr-form .dactions { margin-top: 4px; }
+
+@media (min-width: 1100px) {
+  .gr-back { display: none; }
+  .gr-detail { position: sticky; top: calc(var(--appbar-h, 48px) + 12px); max-height: calc(100vh - var(--appbar-h, 48px) - 24px); overflow: auto; overscroll-behavior: contain; }
+}
+
+@media (max-width: 1099px) {
+  .gr-shell { grid-template-columns: minmax(0, 1fr); grid-template-areas: "main" "aside" "panels"; grid-template-rows: none; }
+}
+
+@media (max-width: 639px) {
+  html { scroll-padding-top: 8px; }
+  .gr-detail, .gr-stagewrap, .gr-tables { scroll-margin-top: 8px; }
+  /* the Tools button folds the year, the buttons and the status line (graph.js sets data-collapsed) */
+  .gr-toolbar[data-collapsed="1"] .gr-yeartool, .gr-toolbar[data-collapsed="1"] .gr-actions,
+  .gr-toolbar[data-collapsed="1"] .gr-editrow, .gr-toolbar[data-collapsed="1"] .gr-statusrow { display: none; }
+  .gr-toolsbtn .tool-hint { color: var(--muted); font-size: 12px; }
+  .gr-fitbtn { display: none; }
+  .gr-stage { aspect-ratio: 4 / 5; min-height: 340px; max-height: 72vh; }
+  .gr-findtool { max-width: none; flex-basis: 100%; }
+  .gr-form, .gr-newsrcbody { grid-template-columns: minmax(0, 1fr); }
+  .gr-srcrow { grid-template-columns: minmax(0, 1fr); }
+  .gr-gradedl > div { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .gr-detail { padding: 12px 12px 14px; }
+}
+
+@media (forced-colors: active) {
+  .gr-shape { fill: CanvasText; stroke: Canvas; forced-color-adjust: none; }
+  .gr-shape.hollow { fill: Canvas; stroke: CanvasText; }
+  .gr-line, .gr-arrow { stroke: CanvasText; forced-color-adjust: none; }
+  .gr-arrow { fill: CanvasText; }
+  .gr-label, .gr-elabel, .gr-q { fill: CanvasText; stroke: Canvas; forced-color-adjust: none; }
+  .gr-node.is-sel .gr-ring, .gr-node.is-active .gr-ring, .gr-node.is-match .gr-mark, .gr-node.is-member .gr-mark { stroke: Highlight; }
+  .chip.gr-memchip[aria-pressed="true"] { outline: 2px solid Highlight; }
+}
+
+@media print {
+  .gr-zoomctl, .gr-notices, .gr-editrow { display: none !important; }
+  .gr-shell { display: block; }
+  .gr-detail { position: static; max-height: none; }
+}

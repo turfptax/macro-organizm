@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Money Over Time</title>
+<meta name="description" content="Official money supply from the monetary base to M4 for the US, euro area, UK, Japan and China, and 770 years of money, debt and gold.">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="assets/macro.css?v=20261024">
+<link rel="stylesheet" href="assets/monetary-history.css?v=20261024">
+<script src="assets/shell.js?v=20261024"></script><!-- in head so a saved theme is applied before the first paint -->
+<!--
+  Palette checks (dataviz skill, scripts/validate_palette.js), run for both surfaces.
+
+  Categorical, fixed order, adjacent pairs:
+    History entities  blue, orange, aqua, yellow, magenta (US, UK, China, Gold, Russia)
+      light on #fcfcfb: lightness PASS, chroma PASS, CVD 8.8 PASS, normal 17.5 PASS, contrast PASS (all >= 3:1)
+      dark on #1a1a19:  lightness PASS, chroma PASS, CVD 8.4 PASS, normal 19.3 PASS, contrast PASS
+    Compare economies  orange, aqua, blue, magenta, green (UK, China, US, Euro area, Japan)
+      light: CVD 9.4 PASS, normal 22.9 PASS, contrast PASS (all >= 3:1)
+      dark:  CVD 9.4 PASS, normal 20.9 PASS, contrast PASS
+  Global debt uses a neutral gray (not a categorical hue).
+  The light aqua, yellow and magenta were darkened (same hue and chroma) so every series
+  stroke clears 3:1 on the light card. Direct end labels, legend chips and the data table
+  still carry identity as well, because the all-pairs test fails for more than three series,
+  as the skill documents; identity is also carried by end-marker shape and legend hover.
+
+  Ordinal ramps (one hue per economy, narrow aggregate = highest contrast), --ordinal:
+    blue, orange, aqua, magenta, green: PASS in light and dark (monotone L, gaps >= 0.06,
+    hue spread <= 1 degree). Light end (broadest aggregate) is >= 3.17:1 on light and
+    >= 3.14:1 on dark, so no series stroke in either theme falls below 3:1.
+    Earlier-definition (dashed) lines are drawn at full opacity so that holds for them too.
+-->
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to the chart</a>
+
+<header class="appbar">
+  <a class="brand" href="monetary-history.html"><span class="brand-dot" aria-hidden="true"></span>Macro Organizm</a>
+  <h1 class="page-title">Money Over Time</h1>
+  <nav class="appnav" aria-label="Pages">
+    <a href="monetary-history.html" aria-current="page">Money Over Time</a>
+    <a href="money-flow.html">Money Flow</a>
+    <a href="world-powers.html">Nations</a>
+    <a href="power-structure.html">Power Structure</a>
+  </nav>
+  <span class="spacer"></span>
+  <button class="btn" id="theme-btn" type="button" aria-label="Switch theme">Theme</button>
+</header>
+
+<noscript>
+  <div class="load-error"><h2>JavaScript is required</h2><p>This page draws its charts in the browser.</p></div>
+</noscript>
+
+<div id="load-error" class="load-error" role="alert" hidden>
+  <h2 id="load-error-title">The chart could not load</h2>
+  <p id="load-error-detail"></p>
+</div>
+
+<div id="app">
+  <div class="viewtabs" role="tablist" aria-label="View">
+    <button class="viewtab" role="tab" id="tab-money" data-view="money" aria-selected="true" aria-controls="main" type="button">Money supply</button>
+    <button class="viewtab" role="tab" id="tab-history" data-view="history" aria-selected="false" aria-controls="main" type="button">Long history</button>
+  </div>
+
+  <div class="shell">
+    <main id="main" class="main" tabindex="-1">
+      <div class="toolbar" id="toolbar"></div>
+
+      <section class="card chartcard" aria-labelledby="chart-title">
+        <div class="chart-head">
+          <h2 class="chart-title" id="chart-title"></h2>
+          <p class="chart-sub" id="chart-sub"></p>
+          <ul class="ladder" id="ladder" aria-label="Which aggregates exist"></ul>
+          <p class="chart-note" id="ladder-note"></p>
+          <p class="chart-note" id="chart-note"></p>
+        </div>
+        <div class="legend" id="legend" role="group" aria-label="Series"></div>
+        <div class="stage" id="stage" tabindex="0" role="group"
+             aria-label="Chart. Use left and right arrow keys to move the readout, plus and minus to zoom, zero to reset."></div>
+        <div class="tableview" id="tableview" tabindex="0" role="region" aria-label="Data table" hidden></div>
+        <div class="keyrow" id="keyrow" aria-label="Line key">
+          <span><svg viewBox="0 0 26 12" aria-hidden="true"><line x1="1" y1="6" x2="25" y2="6"/></svg>Reported</span>
+          <span><svg viewBox="0 0 26 12" aria-hidden="true"><line class="dash" x1="1" y1="6" x2="25" y2="6"/></svg>Estimate or earlier definition</span>
+          <span><svg viewBox="0 0 26 12" aria-hidden="true"><circle cx="13" cy="6" r="4"/></svg>Hollow end: series discontinued</span>
+          <span><svg class="nbadge" viewBox="-8 -8 16 16" aria-hidden="true"><circle r="7.25"/><text dy="0.34em">1</text></svg>Numbered tick: break in a series</span>
+        </div>
+        <div class="sr-only" id="live" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <aside class="card panel" id="panel" aria-label="Context">
+      <div class="ptabs" id="ptabs" role="tablist" aria-label="Panel sections"></div>
+      <div id="psecs"></div>
+    </aside>
+  </div>
+</div>
+
+<div id="dialog-root"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="data/money-supply.js?v=20261024"></script>
+<script src="data/history.js?v=20261024"></script>
+<script src="assets/monetary-history.js?v=20261024"></script>
+</body>
+</html>

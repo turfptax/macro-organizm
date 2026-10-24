@@ -1,0 +1,14 @@
+# Machine-specific Claude Code permissions
+.claude/settings.local.json
+
+# Cached third-party downloads. Rebuild with: python tools/fetch_money_supply.py
+# (several sources do not grant redistribution of their raw files)
+data/raw/
+
+# Pre-revamp snapshots, kept on the original machine only
+archive/
+
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db

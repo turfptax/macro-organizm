@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Power Structure</title>
+<meta name="description" content="Documented ownership, founding, board, partnership and funding ties among families, banks and institutions, with dates and sources.">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="assets/macro.css?v=20261024">
+<link rel="stylesheet" href="assets/graph.css?v=20261024">
+<script src="assets/shell.js?v=20261024"></script><!-- in head so a saved theme is applied before the first paint -->
+<!--
+  Palette checks (dataviz skill, scripts/validate_palette.js). No new colour values: every node and line colour is a
+  macro.css hue token (blue, orange, aqua, yellow, magenta, green, neutral).
+
+  The six chromatic hues, in the fixed order blue, orange, aqua, yellow, magenta, green:
+    dark on #1a1a19:  CVD 8.4 PASS, normal 19.3 PASS, contrast PASS (all >= 3:1)
+    light on #fcfcfb: CVD 8.8 PASS, normal 17.5 PASS, contrast PASS (all >= 3:1)
+  The neutral gray has no chroma by design, so it fails the chroma floor on purpose.
+
+  Fourteen kinds of entity and eighteen kinds of tie share these seven hues, so colour never tells two apart:
+  every kind of entity has its own shape and fill, every kind of tie has its own hue and dash pattern, directed
+  ties carry an arrowhead, and every node, tie and filter chip has its name as text. The Show as table button lists
+  every entity and tie with all of its fields.
+-->
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to the page</a>
+
+<header class="appbar">
+  <a class="brand" href="monetary-history.html"><span class="brand-dot" aria-hidden="true"></span>Macro Organizm</a>
+  <h1 class="page-title">Power Structure</h1>
+  <nav class="appnav" aria-label="Pages">
+    <a href="monetary-history.html">Money Over Time</a>
+    <a href="money-flow.html">Money Flow</a>
+    <a href="world-powers.html">Nations</a>
+    <a href="power-structure.html" aria-current="page">Power Structure</a>
+  </nav>
+  <span class="spacer"></span>
+  <button class="btn" id="theme-btn" type="button" aria-label="Switch theme">Theme</button>
+</header>
+
+<noscript>
+  <div class="load-error"><h2>JavaScript is required</h2><p>This page draws its graph in the browser.</p></div>
+</noscript>
+
+<div id="load-error" class="load-error" role="alert" hidden>
+  <h2 id="load-error-title">The page could not load</h2>
+  <p id="load-error-detail"></p>
+</div>
+
+<div id="app"><div id="graph-root"></div></div>
+
+<div id="dialog-root"></div>
+
+<script id="d3-script" src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="data/power-structure.js?v=20261024"></script>
+<script src="assets/graph-model.js?v=20261024"></script>
+<script src="assets/ui.js?v=20261024"></script>
+<script src="assets/graph.js?v=20261024"></script>
+<script src="assets/power-structure.js?v=20261024"></script>
+</body>
+</html>
