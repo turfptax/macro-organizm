@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Money from first principles</title>
+<meta name="description" content="Seven numbers, a plain walk through how money is created and repaid, eight claims about money, debt and prices tested against data with a verdict each, ten places where pressure shows up and where the system has held, and nine ways to run money compared, with sources and dates.">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="assets/macro.css?v=20261025">
+<link rel="stylesheet" href="assets/ts-chart.css?v=20261025">
+<link rel="stylesheet" href="assets/start.css?v=20261025">
+<script src="assets/shell.js?v=20261025"></script><!-- in head so a saved theme is applied before the first paint -->
+<!--
+  Palette checks (dataviz skill, scripts/validate_palette.js), run for both surfaces.
+  No new colour values: every colour is a macro.css token. Verdicts are a shape plus a word in ink (filled circle, half circle,
+  half square, empty circle, diamond), never a status colour, because status colours are reserved for good and bad.
+  Sparklines are the de-emphasis grey with the latest point in the accent; the bars in the first tile are accent bars, one for
+  each start date and none preferred, beside one grey bar for the claim (emphasis, not categories).
+
+  Claim 1 credit chart, three sectors in the fixed order blue, orange, aqua (households, companies, government):
+    dark on #1a1a19:  lightness PASS, chroma PASS, CVD 9.4 PASS, normal 26.5 PASS, contrast PASS (all >= 3:1)
+    light on #fcfcfb: lightness PASS, chroma PASS, CVD 9.4 PASS, normal 27.7 PASS, contrast PASS
+  Claim 4 house price chart, blue (house price index) and orange (median new house) beside the grey reference line for consumer
+  prices, and claim 5 columns where blue means a positive real return and orange a negative one (a polarity pair, not countries):
+    dark:  CVD 26.8 PASS, normal 31.8 PASS, contrast PASS
+    light: CVD 24.7 PASS, normal 33.6 PASS, contrast PASS
+  Colour never carries identity alone: every chart with two or more series has a legend, end markers of different shapes,
+  a table twin and a CSV, and the readout names the series. The single-series charts (M2 as a share of GDP, ten-year price
+  growth) use the accent and need no legend.
+-->
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to the page</a>
+
+<header class="appbar">
+  <a class="brand" href="index.html"><span class="brand-dot" aria-hidden="true"></span>Macro Organizm</a>
+  <h1 class="page-title">Money from first principles</h1>
+  <nav class="appnav" aria-label="Pages">
+    <button class="navmenu-btn" type="button" aria-expanded="false" aria-controls="navlinks"><span class="navmenu-kicker">Menu</span><span class="navmenu-label"></span><span class="navmenu-chev" aria-hidden="true"></span></button>
+    <div class="navlinks" id="navlinks">
+      <div class="navgroup" role="group" aria-label="Money">
+        <a href="index.html" aria-current="page" data-desc="Seven numbers and eight claims, tested">Start</a>
+        <a href="money-flow.html" data-desc="How money is created and repaid">Money Flow</a>
+        <a href="monetary-history.html" data-desc="M0 to M4 and 770 years of money">Money Over Time</a>
+        <a href="debt.html" data-desc="Who owes what, and what it costs">Debt</a>
+        <a href="prices.html" data-desc="What things cost in hours of work">Prices</a>
+      </div>
+      <span class="navdivider" aria-hidden="true"></span>
+      <div class="navgroup" role="group" aria-label="Power">
+        <a href="world-powers.html" data-desc="Ties between states, with sources">Nations</a>
+        <a href="power-structure.html" data-desc="Ownership and funding ties">Power Structure</a>
+      </div>
+    </div>
+  </nav>
+  <span class="spacer"></span>
+  <button class="btn" id="theme-btn" type="button" aria-label="Switch theme">Theme</button>
+</header>
+
+<noscript>
+  <div class="load-error"><h2>JavaScript is required</h2><p>This page computes its figures and draws its charts in the browser from the data files.</p></div>
+</noscript>
+
+<div id="load-error" class="load-error" role="alert" hidden>
+  <h2 id="load-error-title">The page could not load</h2>
+  <p id="load-error-detail"></p>
+</div>
+
+<div id="app">
+  <div class="shell shell--single">
+    <main id="main" class="main st-main" tabindex="-1">
+      <section class="st-sec st-intro" id="intro" aria-labelledby="intro-h"></section>
+      <section class="st-sec" id="numbers" aria-labelledby="numbers-h"></section>
+      <section class="st-sec" id="how" aria-labelledby="how-h"></section>
+      <section class="st-sec" id="claims" aria-labelledby="claims-h"></section>
+      <section class="st-sec" id="strains" aria-labelledby="strains-h"></section>
+      <section class="st-sec" id="systems" aria-labelledby="systems-h"></section>
+      <section class="st-sec" id="method" aria-labelledby="method-h"></section>
+    </main>
+  </div>
+</div>
+
+<div id="dialog-root"></div>
+
+<script src="data/history.js?v=20261025"></script>
+<script src="data/prices.js?v=20261025"></script>
+<script src="data/debt.js?v=20261025"></script>
+<script src="data/principles.js?v=20261025"></script>
+<script src="assets/ui.js?v=20261025"></script>
+<script src="assets/derive.js?v=20261025"></script>
+<script src="assets/ts-chart.js?v=20261025"></script>
+<script src="assets/start.js?v=20261025"></script>
+</body>
+</html>

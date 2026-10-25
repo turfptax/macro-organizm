@@ -7,9 +7,9 @@
 <title>Nations</title>
 <meta name="description" content="A curated snapshot of selected states and the security, hostility, economic and diplomatic ties between them, coded from public reporting and primary documents, with dates, evidence grades and sources.">
 <link rel="icon" href="data:,">
-<link rel="stylesheet" href="assets/macro.css?v=20261024">
-<link rel="stylesheet" href="assets/graph.css?v=20261024">
-<script src="assets/shell.js?v=20261024"></script><!-- in head so a saved theme is applied before the first paint -->
+<link rel="stylesheet" href="assets/macro.css?v=20261025">
+<link rel="stylesheet" href="assets/graph.css?v=20261025">
+<script src="assets/shell.js?v=20261025"></script><!-- in head so a saved theme is applied before the first paint -->
 <!--
   Palette checks (dataviz skill, scripts/validate_palette.js). No new colour values: every fill and line is a macro.css token.
 
@@ -32,13 +32,24 @@
 <a class="skip-link" href="#main">Skip to the page</a>
 
 <header class="appbar">
-  <a class="brand" href="monetary-history.html"><span class="brand-dot" aria-hidden="true"></span>Macro Organizm</a>
+  <a class="brand" href="index.html"><span class="brand-dot" aria-hidden="true"></span>Macro Organizm</a>
   <h1 class="page-title">Nations</h1>
   <nav class="appnav" aria-label="Pages">
-    <a href="monetary-history.html">Money Over Time</a>
-    <a href="money-flow.html">Money Flow</a>
-    <a href="world-powers.html" aria-current="page">Nations</a>
-    <a href="power-structure.html">Power Structure</a>
+    <button class="navmenu-btn" type="button" aria-expanded="false" aria-controls="navlinks"><span class="navmenu-kicker">Menu</span><span class="navmenu-label"></span><span class="navmenu-chev" aria-hidden="true"></span></button>
+    <div class="navlinks" id="navlinks">
+      <div class="navgroup" role="group" aria-label="Money">
+        <a href="index.html" data-desc="Seven numbers and eight claims, tested">Start</a>
+        <a href="money-flow.html" data-desc="How money is created and repaid">Money Flow</a>
+        <a href="monetary-history.html" data-desc="M0 to M4 and 770 years of money">Money Over Time</a>
+        <a href="debt.html" data-desc="Who owes what, and what it costs">Debt</a>
+        <a href="prices.html" data-desc="What things cost in hours of work">Prices</a>
+      </div>
+      <span class="navdivider" aria-hidden="true"></span>
+      <div class="navgroup" role="group" aria-label="Power">
+        <a href="world-powers.html" aria-current="page" data-desc="Ties between states, with sources">Nations</a>
+        <a href="power-structure.html" data-desc="Ownership and funding ties">Power Structure</a>
+      </div>
+    </div>
   </nav>
   <span class="spacer"></span>
   <button class="btn" id="theme-btn" type="button" aria-label="Switch theme">Theme</button>
@@ -58,10 +69,10 @@
 <div id="dialog-root"></div>
 
 <script id="d3-script" src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
-<script src="data/world-powers.js?v=20261024"></script>
-<script src="assets/graph-model.js?v=20261024"></script>
-<script src="assets/ui.js?v=20261024"></script>
-<script src="assets/graph.js?v=20261024"></script>
-<script src="assets/world-powers.js?v=20261024"></script>
+<script src="data/world-powers.js?v=20261025"></script>
+<script src="assets/graph-model.js?v=20261025"></script>
+<script src="assets/ui.js?v=20261025"></script>
+<script src="assets/graph.js?v=20261025"></script>
+<script src="assets/world-powers.js?v=20261025"></script>
 </body>
 </html>

@@ -7,9 +7,9 @@
 <title>Money Over Time</title>
 <meta name="description" content="Official money supply from the monetary base to M4 for the US, euro area, UK, Japan and China, and 770 years of money, debt and gold.">
 <link rel="icon" href="data:,">
-<link rel="stylesheet" href="assets/macro.css?v=20261024">
-<link rel="stylesheet" href="assets/monetary-history.css?v=20261024">
-<script src="assets/shell.js?v=20261024"></script><!-- in head so a saved theme is applied before the first paint -->
+<link rel="stylesheet" href="assets/macro.css?v=20261025">
+<link rel="stylesheet" href="assets/monetary-history.css?v=20261025">
+<script src="assets/shell.js?v=20261025"></script><!-- in head so a saved theme is applied before the first paint -->
 <!--
   Palette checks (dataviz skill, scripts/validate_palette.js), run for both surfaces.
 
@@ -37,13 +37,24 @@
 <a class="skip-link" href="#main">Skip to the chart</a>
 
 <header class="appbar">
-  <a class="brand" href="monetary-history.html"><span class="brand-dot" aria-hidden="true"></span>Macro Organizm</a>
+  <a class="brand" href="index.html"><span class="brand-dot" aria-hidden="true"></span>Macro Organizm</a>
   <h1 class="page-title">Money Over Time</h1>
   <nav class="appnav" aria-label="Pages">
-    <a href="monetary-history.html" aria-current="page">Money Over Time</a>
-    <a href="money-flow.html">Money Flow</a>
-    <a href="world-powers.html">Nations</a>
-    <a href="power-structure.html">Power Structure</a>
+    <button class="navmenu-btn" type="button" aria-expanded="false" aria-controls="navlinks"><span class="navmenu-kicker">Menu</span><span class="navmenu-label"></span><span class="navmenu-chev" aria-hidden="true"></span></button>
+    <div class="navlinks" id="navlinks">
+      <div class="navgroup" role="group" aria-label="Money">
+        <a href="index.html" data-desc="Seven numbers and eight claims, tested">Start</a>
+        <a href="money-flow.html" data-desc="How money is created and repaid">Money Flow</a>
+        <a href="monetary-history.html" aria-current="page" data-desc="M0 to M4 and 770 years of money">Money Over Time</a>
+        <a href="debt.html" data-desc="Who owes what, and what it costs">Debt</a>
+        <a href="prices.html" data-desc="What things cost in hours of work">Prices</a>
+      </div>
+      <span class="navdivider" aria-hidden="true"></span>
+      <div class="navgroup" role="group" aria-label="Power">
+        <a href="world-powers.html" data-desc="Ties between states, with sources">Nations</a>
+        <a href="power-structure.html" data-desc="Ownership and funding ties">Power Structure</a>
+      </div>
+    </div>
   </nav>
   <span class="spacer"></span>
   <button class="btn" id="theme-btn" type="button" aria-label="Switch theme">Theme</button>
@@ -100,8 +111,8 @@
 <div id="dialog-root"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
-<script src="data/money-supply.js?v=20261024"></script>
-<script src="data/history.js?v=20261024"></script>
-<script src="assets/monetary-history.js?v=20261024"></script>
+<script src="data/money-supply.js?v=20261025"></script>
+<script src="data/history.js?v=20261025"></script>
+<script src="assets/monetary-history.js?v=20261025"></script>
 </body>
 </html>

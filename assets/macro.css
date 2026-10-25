@@ -489,3 +489,69 @@ textarea.input { min-height: 84px; resize: vertical; line-height: 1.45; }
 .dialog .field-hint, .dialog .field-error { margin-top: 0; font-size: 12px; line-height: 1.4; }
 .dialog .field-hint { color: var(--muted); }
 .dialog .field-error { color: var(--ink); }
+
+/* ---------- seven-link grouped nav and phone menu ----------
+   Markup: .appnav > .navmenu-btn + .navlinks > .navgroup (Money, five links) + .navdivider + .navgroup (Power, two links).
+   Wide: one row with a thin divider between the groups. Narrower: the nav takes its own row under the brand and theme
+   button. At 719px and under, with shell.js running (it sets html.js-menu), the links collapse into a button that names
+   the current page and opens a list under two group labels; without script the links just wrap and nothing is hidden.
+   Measured in Chromium with the system-ui stack: the seven links, divider and gaps are about 603px wide, the title
+   (the longest h1 is about 182px) and brand and theme button bring one row to about 1110px, without the title to about
+   905px. Breakpoints leave roughly 8 to 14 percent for wider fonts.
+   These rules supersede the 899px title rule and the 759px nav-row rule above, which were sized for four links. */
+.navlinks { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+.navgroup { display: flex; flex-wrap: wrap; gap: 6px; }
+.navdivider { flex: none; width: 1px; height: 20px; margin: 0 4px; background: var(--border-strong); }
+.navmenu-btn { display: none; }
+
+/* the page title (the h1, still there for assistive tech) goes below 1200px and the nav drops to its own row below 1000px */
+@media (max-width: 1199px) {
+  .page-title {
+    position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+}
+@media (max-width: 999px) {
+  .appnav { order: 3; width: 100%; }
+}
+
+@media (max-width: 639px) {
+  .navdivider { display: none; }
+}
+
+@media (max-width: 719px) {
+  html.js-menu .navdivider { display: none; }
+  html.js-menu .appnav { position: relative; }
+  html.js-menu .navmenu-btn {
+    display: flex; align-items: center; gap: 10px; width: 100%; min-height: 40px; padding: 0 12px;
+    background: var(--surface-2); color: var(--ink); border: 1px solid var(--border); border-radius: 8px;
+    font-size: 14px; text-align: left;
+  }
+  html.js-menu .navmenu-btn:hover { background: var(--raised); border-color: var(--border-strong); }
+  html.js-menu .navmenu-btn[aria-expanded="true"] { background: var(--accent-soft); border-color: var(--accent); }
+  .navmenu-kicker { flex: none; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .navmenu-label { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+  .navmenu-chev { flex: none; width: 7px; height: 7px; margin: -3px 2px 0 0; border: solid currentColor; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+  .navmenu-btn[aria-expanded="true"] .navmenu-chev { margin-top: 3px; transform: rotate(-135deg); }
+
+  /* the list: opens over the page, not in the flow, so nothing below it moves */
+  html.js-menu .navlinks {
+    display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 60;
+    flex-direction: column; align-items: stretch; flex-wrap: nowrap; gap: 0; padding: 6px;
+    max-height: calc(100vh - 120px); max-height: calc(100dvh - 120px); overflow-y: auto; overscroll-behavior: contain;
+    background: var(--surface); border: 1px solid var(--border-strong); border-radius: 10px; box-shadow: var(--shadow);
+  }
+  html.js-menu .navmenu-btn[aria-expanded="true"] + .navlinks { display: flex; }
+  html.js-menu .navgroup { flex-direction: column; flex-wrap: nowrap; gap: 2px; }
+  html.js-menu .navgroup + .navgroup { margin-top: 6px; padding-top: 4px; border-top: 1px solid var(--border); }
+  html.js-menu .navgroup::before {
+    content: attr(aria-label); padding: 6px 10px 2px;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+  }
+  html.js-menu .navlinks a {
+    flex-direction: column; align-items: flex-start; justify-content: center; gap: 1px;
+    height: auto; min-height: 44px; padding: 6px 10px; font-size: 14px; white-space: normal; border-color: transparent;
+  }
+  html.js-menu .navlinks a::after { content: attr(data-desc); font-size: 12px; font-weight: 400; line-height: 1.3; color: var(--muted); }
+  html.js-menu .navlinks a[aria-current="page"] { border-color: var(--accent); }
+}

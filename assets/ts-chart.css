@@ -1,0 +1,198 @@
+/* ts-chart: styles for assets/ts-chart.js (line charts, small multiples, sparklines, ranked bars and dumbbells).
+   Loaded after macro.css. Every colour is a macro.css token, so the light and dark themes (and the theme button) work with
+   no redraw. Series colours are never set here: a page passes a token such as var(--c-blue) and the script writes it to --c.
+   Rules are scoped to .ts-chart, .ts-spark, .ts-bars and .ts-dumb, so no existing page is affected.
+
+   Palette checks (dataviz skill, scripts/validate_palette.js) on the macro.css values, both surfaces
+   (dark #1a1a19, light #fcfcfb). Legend order is series order, and the validator tests adjacent pairs in that order.
+     Fixed order blue, orange, aqua, yellow, magenta, green (Prices items; the first five are the five items):
+       dark:  lightness PASS, chroma PASS, CVD 8.4 PASS, normal 19.3 PASS, contrast PASS (all >= 3:1)
+       light: lightness PASS, chroma PASS, CVD 8.8 PASS, normal 17.5 PASS, contrast PASS
+     Economies in the Money Over Time compare order orange, aqua, blue, magenta, green (UK, China, US, Euro area, Japan):
+       dark: CVD 9.4 PASS, normal 20.9 PASS, contrast PASS.  light: CVD 9.4 PASS, normal 22.9 PASS, contrast PASS
+     Default Debt five with US blue, UK orange, Japan green, Italy magenta, Canada yellow, legend order
+       UK, US, Japan, Italy, Canada (orange, blue, green, magenta, yellow): dark and light CVD 13.0 PASS, normal PASS.
+     Diverging pair for r minus g columns, blue (r below g) and orange (r above g): dark CVD 26.8, normal 31.8 PASS;
+       light CVD 24.7, normal 33.6 PASS. The colours there mean polarity, not countries.
+     Small multiples are an all-pairs form: blue, orange, aqua PASS in both modes (dark CVD 9.4, normal 20.9; light CVD 9.4,
+       normal 22.9). Four or more series in one panel fail all pairs (fixed order, first four: FAIL), so such a panel also
+       carries end markers of different shapes, a legend, direct labels where they fit, and the table twin.
+     FAIL, do not use as a legend order: blue, orange, aqua, magenta, green (US, UK, China, Euro area, Japan): CVD 1.6 dark,
+       5.1 light. blue, magenta, orange, green, aqua (US, Euro area, UK, Japan, China): normal 11.6 dark, 12.0 light.
+       blue, orange, green, yellow, aqua: CVD 2.7 dark, 3.2 light.
+   Neutral lines (--ink-2 reference, --muted guide, --faint context) are not categorical; text never wears a series colour. */
+
+.ts-chart, .ts-spark, .ts-bars, .ts-dumb, .ts-dkey {
+  --ts-surface: var(--surface);
+  --ts-grid: var(--grid);
+  --ts-axis: var(--axis);
+  --ts-tick: var(--muted);
+  --ts-text: var(--ink-2);
+  --ts-strong: var(--ink);
+  --ts-faint: var(--faint);
+  --ts-cursor: var(--ink-2);
+  --ts-focus: var(--focus);
+}
+
+/* ---------- line chart and small multiples ---------- */
+.ts-chart { position: relative; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.ts-legend:empty { display: none; }
+.ts-wrap { position: relative; width: 100%; min-width: 0; border-radius: 8px; touch-action: pan-y; }
+.ts-wrap:focus-visible { outline: 2px solid var(--ts-focus); outline-offset: 2px; }
+.ts-panels { display: grid; grid-template-columns: repeat(var(--ts-cols, 1), minmax(0, 1fr)); gap: 14px 18px; }
+.ts-panel { position: relative; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.ts-ptitle { font-size: 12px; font-weight: 600; color: var(--ts-text); }
+.ts-stage { position: relative; width: 100%; height: var(--ts-h, 300px); min-width: 0; }
+.ts-svg { display: block; width: 100%; height: 100%; user-select: none; -webkit-user-select: none; touch-action: pan-y; }
+.ts-svg text { font: 12px var(--font); fill: var(--ts-tick); font-variant-numeric: tabular-nums; }
+.ts-svg * { pointer-events: none; }
+.ts-svg .ts-overlay { fill: transparent; cursor: crosshair; pointer-events: all; }
+.ts-grid { stroke: var(--ts-grid); stroke-width: 1; shape-rendering: crispEdges; }
+.ts-axisline { stroke: var(--ts-axis); stroke-width: 1; shape-rendering: crispEdges; }
+.ts-zero { stroke: var(--ts-faint); stroke-width: 1; shape-rendering: crispEdges; }
+.ts-ytitle { font-size: 11px; }
+.ts-reflabel { font-size: 11px; fill: var(--ts-text); stroke: var(--ts-surface); stroke-width: 3px; paint-order: stroke; stroke-linejoin: round; }
+.ts-refline { stroke: var(--ts-text); stroke-width: 1; stroke-dasharray: 2 4; }
+
+/* series; --c is the colour passed by the page */
+.ts-s { transition: opacity 0.15s; }
+.ts-s.ts-dim { opacity: 0.22; }
+.ts-ln { fill: none; stroke: var(--c); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ts-solo { fill: var(--c); }
+.ts-mk { fill: var(--c); stroke: var(--ts-surface); stroke-width: 2; }
+.ts-mk.hollow { fill: var(--ts-surface); stroke: var(--c); stroke-width: 2; }
+.ts-col { fill: var(--c); }
+.ts-between { fill: var(--ts-strong); fill-opacity: 0.1; stroke: none; }
+/* a reference line (such as CPI), a dotted guide (such as "doubling every 17 years") and faint context lines */
+.ts-s[data-role="ref"] .ts-ln { stroke: var(--ts-text); stroke-width: 1.5; }
+.ts-s[data-role="guide"] .ts-ln { stroke: var(--ts-tick); stroke-width: 1.5; stroke-dasharray: 2 4; }
+.ts-s[data-role="context"] .ts-ln { stroke: var(--ts-faint); stroke-width: 1.25; }
+.ts-s[data-role="spot"] .ts-ln { stroke: var(--ts-strong); }
+.ts-s[data-role="context"] .ts-mk, .ts-s[data-role="guide"] .ts-mk { display: none; }
+.ts-s[data-role="ref"] .ts-mk { fill: var(--ts-text); }
+
+/* end labels sit in the right margin, joined to the line end by a leader in the series colour */
+.ts-leader { fill: none; stroke: var(--c); stroke-width: 1; stroke-opacity: 0.8; }
+.ts-endlabel text { fill: var(--ts-text); }
+.ts-endlabel .ts-ev { font-weight: 700; fill: var(--ts-strong); }
+
+/* crosshair */
+.ts-vline { stroke: var(--ts-cursor); stroke-width: 1; shape-rendering: crispEdges; }
+.ts-cdot { fill: var(--c); stroke: var(--ts-surface); stroke-width: 2; }
+
+/* readout, built on the shared .tip look */
+.ts-readout { z-index: 6; min-width: 170px; max-width: min(300px, calc(100% - 12px)); pointer-events: none; }
+.ts-ro-panel { font-size: 11px; font-weight: 600; color: var(--muted); }
+.ts-ro-group + .ts-ro-group { margin-top: 6px; }
+.ts-ro-group > .ts-ro-panel { margin-bottom: 2px; }
+.ts-ro-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+.ts-ro-rows { display: flex; flex-direction: column; gap: 2px; }
+.ts-ro-rows li { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; column-gap: 8px; align-items: baseline; line-height: 1.35; }
+.ts-ro-key { width: 22px; height: 12px; align-self: center; overflow: visible; }
+.ts-ro-key line { stroke: var(--c); stroke-width: 2; stroke-linecap: round; }
+.ts-ro-key path, .ts-ro-key rect { fill: var(--c); stroke: var(--raised); stroke-width: 1.5; }
+.ts-ro-key.ts-k-ref line { stroke: var(--ink-2); stroke-width: 1.5; }
+.ts-ro-key.ts-k-guide line { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 2 3; }
+.ts-ro-name { color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ts-ro-val { color: var(--ink); font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+.ts-ro-na .ts-ro-name, .ts-ro-na .ts-ro-val { color: var(--muted); font-weight: 400; }
+.ts-ro-sub { grid-column: 2 / 4; color: var(--muted); font-size: 11px; margin-top: -1px; font-variant-numeric: tabular-nums; }
+.ts-ro-tag { color: var(--muted); font-weight: 500; font-size: 11px; margin-left: 4px; }
+.ts-ro-note { margin-top: 4px; font-size: 11px; color: var(--muted); }
+
+.ts-empty {
+  position: absolute; inset: 0; z-index: 2; display: flex; align-items: center; justify-content: center;
+  padding: 16px; text-align: center; font-size: 13px; color: var(--ink-2); pointer-events: none;
+}
+
+/* legend keys: the chip, key and swatch styles come from macro.css; a reference or guide key is neutral */
+.ts-legend .chip .key.ts-k-ref line { stroke: var(--ink-2); stroke-width: 1.5; }
+.ts-legend .chip .key.ts-k-guide line { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 2 3; }
+.ts-legend .chip .swatch + .swatch { margin-left: -3px; }
+/* a legend that only names the series: plain labels, not buttons */
+.ts-legend .chip--static { cursor: default; }
+.ts-legend .chip--static:hover { border-color: var(--border); color: var(--ink-2); }
+
+/* ---------- sparkline ---------- */
+.ts-spark { display: block; width: 100%; min-width: 0; line-height: 0; }
+.ts-spark-svg { display: block; overflow: visible; width: 100%; max-width: 100%; }
+.ts-spark-line { fill: none; stroke: var(--ts-faint); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.ts-spark-dot { fill: var(--accent); stroke: var(--ts-surface); stroke-width: 2; }
+
+/* ---------- ranked and diverging bars, dumbbells (HTML rows) ----------
+   Every row and the axis row use the same three column widths, so the tracks line up. Where the browser has subgrid (below) the
+   list is one grid and the value column is as wide as the widest value. Elsewhere the value column has a fixed width,
+   --ts-bval-w (set it on the host to change it). Phones stack the track under the label and the value, per row. */
+.ts-bars, .ts-dumb { display: flex; flex-direction: column; gap: 4px; min-width: 0; list-style: none; padding: 0; margin: 0; }
+.ts-brow, .ts-baxrow { grid-template-columns: minmax(5.5rem, 30%) minmax(0, 1fr) var(--ts-bval-w, 8.5rem); }
+.ts-brow {
+  display: grid;
+  align-items: center; column-gap: 10px; min-height: 28px; width: 100%; padding: 2px 0;
+  background: none; border: 0; border-radius: 6px; color: var(--ts-text); font-size: 13px; text-align: left;
+}
+button.ts-brow { cursor: pointer; }
+button.ts-brow:hover { background: var(--surface-2); }
+.ts-blabel { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ts-text); }
+.ts-blabel small { margin-left: 6px; font-size: 11px; color: var(--ts-tick); }
+.ts-brow.ts-strong .ts-blabel { color: var(--ts-strong); font-weight: 600; }
+.ts-btrack { position: relative; height: 20px; min-width: 0; }
+.ts-bbase { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--ts-faint); }
+.ts-bfill { position: absolute; top: 3px; height: 14px; background: var(--c); }
+.ts-bfill.ts-pos { border-radius: 0 4px 4px 0; }
+.ts-bfill.ts-neg { border-radius: 4px 0 0 4px; }
+.ts-bval { color: var(--ts-strong); font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ts-bval small { display: block; font-size: 11px; font-weight: 400; color: var(--ts-tick); }
+.ts-baxis { position: relative; height: 16px; margin-top: 2px; }
+.ts-baxis span { position: absolute; top: 0; transform: translateX(-50%); font-size: 11px; color: var(--ts-tick); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ts-baxrow { display: grid; column-gap: 10px; }
+.ts-gridtick { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--ts-grid); }
+.ts-bnote { margin: 4px 0 0; font-size: 12px; color: var(--ts-tick); }
+.ts-bempty { font-size: 13px; color: var(--muted); }
+
+.ts-dmk {
+  position: absolute; top: 4px; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%;
+  background: var(--c); border: 2px solid var(--ts-surface); box-sizing: content-box; transform: translate(-2px, -2px);
+}
+.ts-dmk.ts-from { background: var(--ts-surface); border: 2px solid var(--c); transform: translate(-2px, -2px); }
+.ts-dbar { position: absolute; top: 9px; height: 2px; background: var(--c); opacity: 0.5; }
+.ts-dkey { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 12px; color: var(--ts-text); }
+.ts-dkey span { display: inline-flex; align-items: center; gap: 6px; }
+.ts-dkey i { display: inline-block; width: 12px; height: 12px; border-radius: 50%; box-sizing: border-box; background: var(--ts-tick); }
+.ts-dkey i.ts-from { background: var(--ts-surface); border: 2px solid var(--ts-tick); }
+
+@media (min-width: 640px) {
+  @supports (grid-template-columns: subgrid) {
+    .ts-bars, .ts-dumb { display: grid; grid-template-columns: minmax(5.5rem, 30%) minmax(0, 1fr) minmax(3.5rem, auto); column-gap: 10px; row-gap: 4px; }
+    .ts-bars > li, .ts-dumb > li { display: grid; grid-column: 1 / -1; grid-template-columns: subgrid; column-gap: 10px; min-width: 0; }
+    .ts-bars > li > .ts-brow, .ts-dumb > li > .ts-brow, .ts-bars > li > .ts-baxrow, .ts-dumb > li > .ts-baxrow {
+      grid-column: 1 / -1; grid-template-columns: subgrid; column-gap: 10px;
+    }
+  }
+}
+
+/* ---------- phones ---------- */
+@media (max-width: 639px) {
+  .ts-stage { height: var(--ts-h-sm, 260px); }
+  .ts-panels { gap: 12px 12px; }
+  .ts-brow { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "label val" "track track"; row-gap: 2px; padding: 4px 0; }
+  .ts-brow .ts-blabel { grid-area: label; white-space: normal; }
+  .ts-brow .ts-btrack { grid-area: track; }
+  .ts-brow .ts-bval { grid-area: val; }
+  .ts-baxrow { grid-template-columns: minmax(0, 1fr); }
+  .ts-baxrow > :first-child, .ts-baxrow > :last-child { display: none; }
+}
+
+@media (forced-colors: active) {
+  .ts-ln, .ts-leader { stroke: CanvasText; }
+  .ts-mk, .ts-cdot, .ts-bfill, .ts-dmk, .ts-col { fill: CanvasText; background: CanvasText; }
+  .ts-mk.hollow, .ts-dmk.ts-from { fill: Canvas; background: Canvas; }
+  .ts-wrap:focus-visible { outline-color: Highlight; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ts-s { transition: none; }
+}
+
+@media print {
+  .ts-readout { display: none; }
+}

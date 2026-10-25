@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Prices and Purchasing Power</title>
+<meta name="description" content="How fast prices double over four fixed windows and your own, and what everyday items, houses and land cost in dollars, hours of work and ounces of gold, with gaps and proxies marked and every source shown.">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="assets/macro.css?v=20261025">
+<link rel="stylesheet" href="assets/ts-chart.css?v=20261025">
+<link rel="stylesheet" href="assets/prices.css?v=20261025">
+<script src="assets/shell.js?v=20261025"></script><!-- in head so a saved theme is applied before the first paint -->
+<!--
+  Palette checks (dataviz skill, scripts/validate_palette.js), run for both surfaces.
+  No new colour values: every mark is a macro.css token.
+
+  Items chart. Colour follows the item while it is drawn: the first free slot in the fixed order blue, orange, aqua,
+  yellow, magenta, preferring a slot that does not pair badly with those already in use. Survivors keep their colour when
+  another item is added or removed. At most five items are drawn. Legend order is slot order.
+    dark on #1a1a19, five slots:  lightness PASS, chroma PASS, CVD 8.4 PASS (worst adjacent aqua/yellow, protan),
+      normal 19.3 PASS, contrast PASS (all >= 3:1)
+    light on #fcfcfb, five slots: lightness PASS, chroma PASS, CVD 8.8 PASS, normal 17.5 PASS, contrast PASS
+    first four slots: dark CVD 8.4 and normal 19.8 PASS; light CVD 8.8 and normal 19.2 PASS
+  The all-pairs test (any two lines can meet) does not hold for more than three items, as the skill documents:
+    blue/orange/aqua, blue/aqua/yellow and blue/yellow/magenta are clean in both modes; a fourth or fifth item adds a weak
+    pair (orange/yellow normal 10.6 dark and 9.9 light; orange/magenta 11.6 and 12.0; aqua/magenta CVD 1.6 and 5.1).
+    The default view draws four items with bread (orange) and the new house (yellow) five orders of magnitude apart.
+    For these pairs identity is also carried by the legend, the picker chips, a different end-marker shape per slot,
+    direct end labels (up to four lines), highlight on legend hover, the readout, and the table twin of every chart.
+
+  Real return columns and the house-price pairs. Blue (positive) and orange (negative) columns: dark CVD 26.8,
+  normal 31.8 PASS; light CVD 24.7, normal 33.6 PASS. There the two colours mean sign (and, in the house chart, which
+  measure), never a country, and the key says so. A single line (rolling growth, relative price, cumulative value) is
+  --accent; reference lines are neutral (--ink-2 for CPI, --muted for guides).
+
+  The coverage strip for the pop records uses one hue (--accent) for dollar prices and neutral tones for the index and
+  the nickel span; rows are named in text, so colour carries no identity.
+-->
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to the page</a>
+
+<header class="appbar">
+  <a class="brand" href="index.html"><span class="brand-dot" aria-hidden="true"></span>Macro Organizm</a>
+  <h1 class="page-title">Prices and Purchasing Power</h1>
+  <nav class="appnav" aria-label="Pages">
+    <button class="navmenu-btn" type="button" aria-expanded="false" aria-controls="navlinks"><span class="navmenu-kicker">Menu</span><span class="navmenu-label"></span><span class="navmenu-chev" aria-hidden="true"></span></button>
+    <div class="navlinks" id="navlinks">
+      <div class="navgroup" role="group" aria-label="Money">
+        <a href="index.html" data-desc="Seven numbers and eight claims, tested">Start</a>
+        <a href="money-flow.html" data-desc="How money is created and repaid">Money Flow</a>
+        <a href="monetary-history.html" data-desc="M0 to M4 and 770 years of money">Money Over Time</a>
+        <a href="debt.html" data-desc="Who owes what, and what it costs">Debt</a>
+        <a href="prices.html" aria-current="page" data-desc="What things cost in hours of work">Prices</a>
+      </div>
+      <span class="navdivider" aria-hidden="true"></span>
+      <div class="navgroup" role="group" aria-label="Power">
+        <a href="world-powers.html" data-desc="Ties between states, with sources">Nations</a>
+        <a href="power-structure.html" data-desc="Ownership and funding ties">Power Structure</a>
+      </div>
+    </div>
+  </nav>
+  <span class="spacer"></span>
+  <button class="btn" id="theme-btn" type="button" aria-label="Switch theme">Theme</button>
+</header>
+
+<noscript>
+  <div class="load-error"><h2>JavaScript is required</h2><p>This page computes its figures and draws its charts in the browser from the data files.</p></div>
+</noscript>
+
+<div id="load-error" class="load-error" role="alert" hidden>
+  <h2 id="load-error-title">The page could not load</h2>
+  <p id="load-error-detail"></p>
+</div>
+
+<div id="app">
+  <div class="shell shell--single">
+    <main id="main" class="main pr-main" tabindex="-1">
+
+      <section class="card chartcard pr-intro" aria-labelledby="intro-h">
+        <div class="chart-head">
+          <h2 class="chart-title" id="intro-h">What this page measures</h2>
+          <p class="plain pr-lead">How fast do prices rise, which things rise faster, and what does it cost in work? Prices are counted here in dollars, in hours of work at average pay, and in ounces of gold. The page reports measurements and their limits. It does not say what prices ought to be or who is responsible for them.</p>
+        </div>
+        <ul class="pr-kinds" aria-label="How statements are labelled">
+          <li><span class="badge pr-kind">Measured</span><span>A number computed in your browser from the data files, with its period and source.</span></li>
+          <li><span class="badge pr-kind">Method</span><span>How a number is worked out, so that you can check it.</span></li>
+          <li><span class="badge pr-kind">Interpretation</span><span>A reading that economists dispute. Marked each time and never presented as a result.</span></li>
+        </ul>
+        <p class="chart-note" id="pr-asof"></p>
+        <nav class="pr-jump" aria-label="On this page" id="pr-jump"></nav>
+      </section>
+
+      <div class="toolbar pr-toolbar" id="pr-toolbar"></div>
+
+      <section class="card chartcard pr-sec" id="doubling" aria-labelledby="doubling-h">
+        <div class="chart-head">
+          <h2 class="chart-title" id="doubling-h">How fast do prices double?</h2>
+          <p class="chart-sub">Pick a series and see how long it took to double over four fixed windows and one of your own. The answer depends on the window, and none of the windows is the right one.</p>
+        </div>
+        <div id="pr-calc"></div>
+      </section>
+
+      <section class="card chartcard pr-sec" id="items" aria-labelledby="items-h">
+        <div class="chart-head">
+          <h2 class="chart-title" id="items-h">Everyday items, homes and land</h2>
+          <p class="chart-sub" id="items-sub"></p>
+        </div>
+        <div id="pr-items"></div>
+      </section>
+
+      <section class="card chartcard pr-sec" id="pop" aria-labelledby="pop-h" hidden>
+        <div class="chart-head">
+          <h2 class="chart-title" id="pop-h">A can of pop: what the records cover</h2>
+          <p class="chart-sub">There is no single record of the price of a can of cola. These are the pieces that exist, and the gaps between them.</p>
+        </div>
+        <div id="pr-pop"></div>
+      </section>
+
+      <section class="card chartcard pr-sec" id="houses" aria-labelledby="houses-h">
+        <div class="chart-head">
+          <h2 class="chart-title" id="houses-h">Homes and land against pay and income</h2>
+          <p class="chart-sub" id="houses-sub"></p>
+        </div>
+        <div id="pr-houses"></div>
+      </section>
+
+      <section class="card chartcard pr-sec" id="savings" aria-labelledby="savings-h" hidden>
+        <div class="chart-head">
+          <h2 class="chart-title" id="savings-h">Real return on savings</h2>
+          <p class="chart-sub">What a saver in 3-month Treasury bills earned after prices rose, year by year. A bar below zero means the interest was smaller than the rise in prices.</p>
+        </div>
+        <div id="pr-savings"></div>
+      </section>
+
+      <section class="card chartcard pr-sec" id="method" aria-labelledby="method-h">
+        <div class="chart-head">
+          <h2 class="chart-title" id="method-h">Method, limits and sources</h2>
+          <p class="chart-sub">How each number on this page is worked out, what it cannot show, and where every series comes from.</p>
+        </div>
+        <div id="pr-method"></div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<div id="dialog-root"></div>
+
+<script src="data/prices.js?v=20261025"></script>
+<script src="data/prices-curated.js?v=20261025"></script>
+<script src="data/history.js?v=20261025"></script>
+<script src="assets/ui.js?v=20261025"></script>
+<script src="assets/derive.js?v=20261025"></script>
+<script src="assets/ts-chart.js?v=20261025"></script>
+<script src="assets/prices.js?v=20261025"></script>
+</body>
+</html>

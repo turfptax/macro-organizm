@@ -1,0 +1,114 @@
+/* Debt and Interest page: layout for the controls, summary tiles, chart cards, notes and tables.
+   Loaded after macro.css and ts-chart.css. Every colour is a macro.css token, so the light and dark themes need nothing here.
+   Chart colours are set by assets/debt.js from the tokens (see the palette notes in debt.html). */
+
+.dp-main { gap: 14px; }
+@media (max-width: 639px) { .dp-main { padding: 0 4px; } } /* 12px shell padding plus 4px: a 16px gutter on a phone */
+
+/* intro and controls */
+.dp-intro { display: flex; flex-direction: column; gap: 6px; max-width: 80ch; }
+.dp-lede { font-size: 15px; line-height: 1.55; color: var(--ink); }
+.dp-fine { font-size: 12px; line-height: 1.5; color: var(--muted); }
+.dp-fine b { color: var(--ink-2); font-weight: 600; }
+.dp-tools .tb-body { gap: 10px; }
+.dp-tools .seg, .dp-ctl .seg { flex-wrap: wrap; }
+.dp-ctl .tool { min-width: 0; max-width: 100%; }
+.dp-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.dp-tools select.input { width: auto; min-width: 11em; max-width: 100%; }
+.dp-tools .tb-row { align-items: flex-end; }
+.dp-sum { font-weight: 400; color: var(--muted); font-size: 12px; }
+
+/* summary tiles */
+.dp-glance { display: flex; flex-direction: column; gap: 8px; scroll-margin-top: calc(var(--appbar-h, 48px) + 12px); }
+.dp-glance h2 { font-size: 16px; font-weight: 700; }
+.dp-kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+@media (min-width: 760px) { .dp-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.dp-tile {
+  display: flex; flex-direction: column; gap: 4px; min-width: 0; padding: 12px 12px 10px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+}
+.dp-tile-label { font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); line-height: 1.3; }
+.dp-tile-value { font-size: 28px; font-weight: 700; line-height: 1.15; color: var(--ink); overflow-wrap: anywhere; }
+.dp-tile-value small { font-size: 14px; font-weight: 500; color: var(--ink-2); }
+.dp-tile-delta, .dp-tile-sub { font-size: 12px; line-height: 1.4; color: var(--ink-2); }
+.dp-tile-spark { margin: 4px 0 2px; min-height: 32px; }
+.dp-tile-foot { margin-top: auto; font-size: 11px; line-height: 1.4; color: var(--muted); }
+.dp-tile-foot a { color: var(--link); }
+@media (max-width: 639px) {
+  .dp-tile { padding: 10px 10px 8px; }
+  .dp-tile-value { font-size: 24px; }
+}
+
+/* chart cards */
+.dp-card { scroll-margin-top: calc(var(--appbar-h, 48px) + 12px); }
+.dp-card > .chart-head { max-width: 90ch; }
+.dp-ctl { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 16px; }
+.dp-ctl .dp-actions { margin-left: auto; display: flex; flex-wrap: wrap; gap: 6px; }
+.dp-miss { padding-left: 8px; border-left: 3px solid var(--c-orange); color: var(--ink-2); }
+.dp-extra { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.dp-extra:empty, .dp-notes:empty, .dp-srcs:empty { display: none; }
+.dp-cap { font-size: 12px; font-weight: 600; color: var(--ink-2); margin-bottom: 4px; }
+.dp-extra .tableview { max-height: 360px; }
+
+/* notes: each statement carries its kind */
+.dp-notes { display: flex; flex-direction: column; gap: 8px; padding-top: 10px; border-top: 1px solid var(--grid); }
+.dp-note { display: grid; grid-template-columns: 9.5em minmax(0, 1fr); gap: 4px 12px; font-size: 13px; line-height: 1.55; color: var(--ink-2); max-width: 100ch; }
+.dp-note .badge { justify-self: start; align-self: start; margin-top: 2px; white-space: nowrap; }
+.dp-note b { color: var(--ink); font-weight: 600; }
+.dp-note .dp-views { display: flex; flex-direction: column; gap: 4px; }
+.dp-note .dp-views span { display: block; }
+@media (max-width: 639px) { .dp-note { grid-template-columns: minmax(0, 1fr); } }
+.dp-srcs { display: flex; flex-direction: column; gap: 3px; }
+.dp-srcs .chart-note { overflow-wrap: anywhere; }
+.dp-srcs a { color: var(--link); }
+
+/* r minus g: chart, one-sentence explanation and the worked year */
+.dp-rg {
+  display: grid; grid-template-columns: minmax(0, 1fr) 340px; grid-template-areas: "chart explain" "chart detail";
+  grid-template-rows: auto 1fr; gap: 14px 18px; align-items: start;
+}
+.dp-rg-chart { grid-area: chart; min-width: 0; }
+.dp-rg-explain { grid-area: explain; }
+.dp-rg-detail { grid-area: detail; }
+@media (max-width: 1099px) {
+  .dp-rg { grid-template-columns: minmax(0, 1fr); grid-template-areas: "explain" "chart" "detail"; grid-template-rows: auto; }
+}
+.dp-rg-explain, .dp-rg-detail { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.dp-sentence { font-size: 14px; line-height: 1.55; color: var(--ink); padding: 10px 12px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; }
+.dp-sentence .badge { margin-right: 6px; }
+.dp-keys { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--ink-2); }
+.dp-keys span { display: flex; align-items: flex-start; gap: 8px; }
+.dp-keys .swatch { margin-top: 3px; }
+.dp-formula { font-size: 12px; color: var(--ink-2); }
+.dp-formula code { display: block; padding: 6px 8px; margin: 4px 0 6px; font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; color: var(--ink); white-space: normal; overflow-wrap: anywhere; }
+.dp-formula table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.dp-formula th { text-align: left; font-weight: 400; color: var(--ink-2); padding: 3px 0; border-bottom: 1px solid var(--grid); }
+.dp-formula td { text-align: right; font-weight: 600; color: var(--ink); padding: 3px 0 3px 8px; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+.dp-formula tr.dp-res th, .dp-formula tr.dp-res td { border-bottom: 0; padding-top: 6px; }
+.dp-formula .dp-small { margin-top: 6px; font-size: 11px; color: var(--muted); line-height: 1.4; }
+
+/* method and series tables */
+.dp-method { display: flex; flex-direction: column; gap: 12px; }
+.dp-method h3 { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+.dp-method ul { display: flex; flex-direction: column; gap: 5px; padding-left: 18px; list-style: disc; font-size: 13px; line-height: 1.55; color: var(--ink-2); max-width: 100ch; }
+.dp-method li b { color: var(--ink); font-weight: 600; }
+.dp-method code { font: 12px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--ink); background: var(--surface-2); padding: 0 4px; border-radius: 4px; }
+.dp-method details summary { min-height: 36px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 13px; color: var(--ink); font-weight: 600; list-style: none; }
+.dp-method details summary::-webkit-details-marker { display: none; }
+.dp-method details summary::before { content: ""; flex: none; width: 6px; height: 6px; border: solid currentColor; border-width: 0 2px 2px 0; transform: rotate(-45deg); }
+.dp-method details[open] summary::before { transform: rotate(45deg); }
+.dp-method details[open] summary { margin-bottom: 8px; }
+.dp-links { display: flex; flex-wrap: wrap; gap: 8px; }
+.dp-links a { display: inline-flex; align-items: center; min-height: 32px; padding: 0 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; text-decoration: none; color: var(--ink-2); }
+.dp-links a:hover { background: var(--surface-2); color: var(--ink); }
+
+/* dialog table */
+.dp-dlg .tableview { margin-top: 10px; max-height: 50vh; }
+
+/* the chart hosts never overflow the card */
+.dp-chart, .dp-rg-chart { min-width: 0; }
+@media (max-width: 639px) {
+  .dp-ctl .dp-actions { margin-left: 0; }
+}
+
+.dp-cards { display: flex; flex-direction: column; gap: 14px; min-width: 0; }

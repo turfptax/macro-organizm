@@ -1,0 +1,155 @@
+/* Prices page rules. Loaded after macro.css and ts-chart.css, which hold the tokens, the chart and the shared components.
+   Every class here starts with pr-. No new colour values: every fill is a macro.css token. */
+
+/* page frame: one column, readable width */
+.pr-main { width: 100%; max-width: 1120px; margin: 0 auto; gap: 14px; }
+@media (max-width: 639px) { .pr-main { padding: 0 4px; } } /* 12px shell padding plus 4px: a 16px gutter on a phone */
+.pr-intro, .pr-sec { gap: 14px; scroll-margin-top: calc(var(--appbar-h, 56px) + 10px); }
+.pr-sec .chart-sub, .pr-intro .pr-lead { max-width: 72em; }
+.pr-h3 { margin-top: 6px; font-size: 14px; font-weight: 700; color: var(--ink); }
+.pr-h3:focus-visible, .chart-title:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+.pr-hint { font-size: 12px; color: var(--muted); max-width: 70em; }
+.pr-hint:empty { display: none; }
+.pr-status { min-height: 1.4em; font-size: 12px; color: var(--ink-2); }
+.pr-status:empty { min-height: 0; }
+.seg.pr-wrap { flex-wrap: wrap; }
+
+/* statement kinds */
+.pr-kinds { display: grid; gap: 6px; }
+.pr-kinds li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; font-size: 13px; color: var(--ink-2); }
+.pr-kind { flex: none; font-weight: 600; color: var(--ink); background: var(--surface-2); }
+.pr-kinds .pr-kind { min-width: 8.5em; text-align: center; }
+.pr-kindline { max-width: 75em; font-size: 13px; line-height: 1.55; color: var(--ink-2); }
+.pr-kindline .pr-kind { margin-right: 2px; }
+.pr-methodnote, .pr-facts { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+
+/* jump chips are links styled as chips */
+.pr-jump { display: flex; flex-wrap: wrap; gap: 6px; }
+.pr-jumpchip { text-decoration: none; }
+.pr-jumpchip:hover { text-decoration: none; }
+
+/* the doubling-time calculator */
+.pr-calcrow { align-items: flex-end; }
+.pr-selwrap { flex: 0 1 28em; min-width: 0; }
+.pr-select { min-height: 36px; width: 100%; max-width: 100%; }
+.pr-wins { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 10px; }
+.pr-win { display: flex; flex-direction: column; gap: 6px; min-width: 0; padding: 12px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; }
+.pr-win-title { font-size: 14px; font-weight: 700; color: var(--ink); }
+.pr-win-sub { font-size: 12px; color: var(--muted); }
+.pr-result { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.pr-win-span { font-size: 12px; color: var(--ink-2); }
+.pr-win-big { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 6px; }
+.pr-big { font-size: 30px; font-weight: 700; line-height: 1.1; color: var(--ink); overflow-wrap: anywhere; }
+.pr-bigsub { font-size: 13px; color: var(--ink-2); }
+.pr-pace { font-size: 12px; font-weight: 600; color: var(--ink); }
+.pr-noresult { font-size: 13px; color: var(--ink-2); }
+.pr-dl { display: flex; flex-direction: column; gap: 2px; font-size: 12px; }
+.pr-dl > div { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; padding: 3px 0; border-bottom: 1px solid var(--grid); }
+.pr-dl dt { color: var(--muted); }
+.pr-dl dd { max-width: 14em; text-align: right; color: var(--ink); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.pr-meter { display: flex; flex-direction: column; gap: 3px; }
+.pr-meter-track { position: relative; height: 8px; background: var(--grid); border-radius: 4px; }
+.pr-meter-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); border-radius: 4px; }
+.pr-meter-tick { position: absolute; top: -3px; bottom: -3px; width: 2px; margin-left: -1px; background: var(--ink); border-radius: 1px; }
+.pr-meter-cap { position: relative; display: flex; justify-content: space-between; height: 14px; font-size: 11px; color: var(--muted); }
+.pr-meter-17 { position: absolute; left: 42.5%; transform: translateX(-50%); font-weight: 700; color: var(--ink); }
+.pr-fields { display: flex; flex-direction: column; gap: 6px; }
+.pr-fieldrow { display: flex; align-items: center; gap: 6px; }
+.pr-fl { flex: none; width: 2.8em; font-size: 12px; color: var(--muted); }
+.pr-mo { flex: 1 1 5em; width: auto; min-width: 0; }
+.pr-yr { flex: none; width: 5.6em; }
+.pr-verdict { max-width: 75em; }
+
+/* charts, tables and notes */
+.pr-box { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.pr-chart { min-width: 0; }
+.pr-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.pr-table { min-width: 0; }
+.pr-details { min-width: 0; }
+.pr-details > summary { display: flex; align-items: center; min-height: 36px; cursor: pointer; font-size: 13px; color: var(--ink-2); }
+.pr-details[open] > summary { margin-bottom: 6px; }
+.pr-srcbox, .pr-gaps { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.pr-src { max-width: 80em; }
+.pr-bl { display: flex; flex-direction: column; gap: 6px; padding-left: 1.2em; list-style: disc; font-size: 13px; color: var(--ink-2); }
+.pr-bl b { color: var(--ink); }
+.pr-breaks { display: flex; flex-direction: column; gap: 2px; margin-top: 2px; padding-left: 1.2em; list-style: circle; font-size: 12px; color: var(--ink-2); }
+.pr-proxy .badge { margin-right: 2px; }
+.pr-interp { display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; border: 1px solid var(--border); border-left: 4px solid var(--muted); border-radius: 8px; background: var(--surface-2); }
+.pr-key { font-size: 12px; color: var(--ink-2); }
+.pr-key .swatch { margin: 0 4px 0 2px; vertical-align: -1px; }
+.pr-bars { min-width: 0; }
+.pr-landwrap { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+
+/* items picker */
+.pr-picker { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; }
+.pr-picker-sum { display: flex; align-items: center; min-height: 40px; padding: 0 12px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--ink); }
+.pr-picker-body { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 12px 20px; padding: 2px 12px 12px; }
+.pr-group { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.pr-group-title { font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+.pr-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.pr-chip .swatch { width: 12px; height: 12px; border-radius: 3px; }
+
+/* what the pop records cover */
+.pr-strip { display: flex; flex-direction: column; gap: 10px; }
+.pr-strip-row { display: grid; grid-template-columns: minmax(9em, 27%) minmax(0, 1fr); gap: 4px 12px; align-items: start; }
+.pr-strip-label { font-size: 12px; color: var(--ink-2); }
+.pr-strip-body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.pr-track { position: relative; display: block; height: 14px; background: var(--surface-2); border: 1px solid var(--grid); border-radius: 4px; }
+.pr-seg { position: absolute; top: 1px; bottom: 1px; min-width: 2px; background: var(--accent); border-radius: 2px; }
+.pr-seg--index { background: var(--faint); }
+.pr-seg--cited { top: 0; bottom: 0; background: repeating-linear-gradient(135deg, var(--ink-2) 0 3px, transparent 3px 6px); border: 1px solid var(--ink-2); box-sizing: border-box; }
+.pr-strip-desc { font-size: 11px; color: var(--muted); }
+.pr-strip-axis { display: grid; grid-template-columns: minmax(9em, 27%) minmax(0, 1fr); gap: 12px; margin-top: 2px; }
+.pr-axis-body { position: relative; height: 16px; }
+.pr-axis-body span { position: absolute; top: 0; transform: translateX(-50%); font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.pr-strip-key { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 12px; color: var(--ink-2); }
+.pr-k { display: inline-block; width: 18px; height: 10px; margin-right: 6px; vertical-align: -1px; border-radius: 2px; box-sizing: border-box; }
+.pr-k--bls { background: var(--accent); }
+.pr-k--index { background: var(--faint); }
+.pr-k--cited { background: repeating-linear-gradient(135deg, var(--ink-2) 0 3px, transparent 3px 6px); border: 1px solid var(--ink-2); }
+.pr-k--none { background: var(--surface-2); border: 1px solid var(--grid); }
+
+/* method */
+.pr-defs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 8px 28px; }
+.pr-defs > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.pr-defs dt { font-size: 13px; font-weight: 600; color: var(--ink); }
+.pr-defs dd { font-size: 13px; color: var(--ink-2); }
+.pr-limits li { max-width: 80em; }
+
+@media (max-width: 639px) {
+  .pr-main { gap: 12px; }
+  .pr-intro, .pr-sec { gap: 12px; }
+  .pr-big { font-size: 26px; }
+  .pr-strip-row { grid-template-columns: minmax(0, 1fr); }
+  .pr-strip-axis { grid-template-columns: minmax(0, 1fr); }
+  .pr-strip-axis > :first-child { display: none; }
+  .pr-picker-sum { min-height: 44px; }
+  .pr-details > summary { min-height: 44px; }
+  .pr-kinds .pr-kind { min-width: 0; }
+  .pr-yr { width: 5em; }
+}
+
+@media (forced-colors: active) {
+  .pr-meter-fill, .pr-seg { background: Highlight; }
+  .pr-seg--index { background: GrayText; }
+  .pr-meter-tick { background: CanvasText; }
+  .pr-interp { border-left-color: CanvasText; }
+}
+
+/* disclosure triangles: a flex summary loses its own marker, so draw one */
+.pr-details > summary, .pr-picker-sum { list-style: none; }
+.pr-details > summary::-webkit-details-marker, .pr-picker-sum::-webkit-details-marker { display: none; }
+.pr-details > summary::before, .pr-picker-sum::before {
+  content: ""; flex: none; width: 6px; height: 6px; margin: -2px 10px 0 2px;
+  border: solid currentColor; border-width: 0 2px 2px 0; transform: rotate(-45deg); transition: transform 0.15s;
+}
+.pr-details[open] > summary::before, .pr-picker[open] > .pr-picker-sum::before { margin-top: -4px; transform: rotate(45deg); }
+@media (prefers-reduced-motion: reduce) { .pr-details > summary::before, .pr-picker-sum::before { transition: none; } }
+
+/* ranked bars: a fixed value column so every row and the axis share one track width (the shared chart sizes it by content) */
+@media (min-width: 640px) {
+  .pr-bars .ts-brow, .pr-bars .ts-baxrow { grid-template-columns: minmax(5.5rem, 26%) minmax(0, 1fr) 10.5rem; }
+}
+
+/* a segmented control that wraps lets a long label break onto a second line instead of widening the page */
+.seg.pr-wrap button { white-space: normal; text-align: center; }

@@ -1,4 +1,4 @@
-/* Macro Organizm shell: saved theme and theme button, skip link, and the load-failure panel.
+/* Macro Organizm shell: saved theme and theme button, skip link, the phone nav menu, and the load-failure panel.
    Load it in <head>, after the stylesheets and before d3 and the page script, so a saved
    theme is applied before the first paint. Plain script with no dependencies.
    Pages call window.MacroShell.needD3() and window.MacroShell.fatal(); a page script guards
@@ -33,8 +33,58 @@
   const saved = store.get(KEY);
   if (saved === 'light' || saved === 'dark') root.dataset.theme = saved;
 
+  // the phone menu (macro.css) applies only when this script runs; without it the nav links wrap and nothing is hidden
+  root.classList.add('js-menu');
+
+  // the menu button names the current page, read from the link marked aria-current. Tried as the nav is parsed
+  // so the name is there at first paint, and again when the page is ready.
+  function fillMenuLabel() {
+    const label = document.querySelector('.navmenu-label');
+    const cur = document.querySelector('.appnav a[aria-current="page"]');
+    const name = cur ? cur.textContent.trim() : '';
+    if (!label || !name) return false;
+    label.textContent = name;
+    return true;
+  }
+  if (window.MutationObserver && !fillMenuLabel()) {
+    const mo = new MutationObserver(() => { if (fillMenuLabel()) mo.disconnect(); });
+    mo.observe(root, { childList: true, subtree: true });
+    document.addEventListener('DOMContentLoaded', () => mo.disconnect());
+  }
+
+  // at 719px and under the seven links collapse into a button that opens a list. It is a disclosure, not a dialog:
+  // Escape, a tap outside, tabbing out, or choosing a link closes it, and the page behind stays usable.
+  function wireNavMenu() {
+    fillMenuLabel();
+    const nav = document.querySelector('.appnav');
+    const btn = nav && nav.querySelector('.navmenu-btn');
+    const list = nav && nav.querySelector('.navlinks');
+    if (!btn || !list) return;
+    const isOpen = () => btn.getAttribute('aria-expanded') === 'true';
+    const setOpen = (open, refocus) => {
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      if (!open && refocus) btn.focus();
+    };
+    btn.addEventListener('click', () => setOpen(!isOpen(), false));
+    list.addEventListener('click', (e) => { if (e.target.closest('a')) setOpen(false, true); });
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape' || !isOpen()) return;
+      const a = document.activeElement;
+      setOpen(false, nav.contains(a) || a === document.body);
+    });
+    document.addEventListener('pointerdown', (e) => { if (isOpen() && !nav.contains(e.target)) setOpen(false, false); });
+    nav.addEventListener('focusout', (e) => { if (isOpen() && e.relatedTarget && !nav.contains(e.relatedTarget)) setOpen(false, false); });
+    window.addEventListener('pageshow', (e) => { if (e.persisted) setOpen(false, false); });
+    if (window.matchMedia) {
+      const phone = window.matchMedia('(max-width: 719px)');
+      const onChange = () => setOpen(false, false);
+      if (phone.addEventListener) phone.addEventListener('change', onChange); else if (phone.addListener) phone.addListener(onChange);
+    }
+  }
+
   function wire() {
     syncThemeBtn();
+    wireNavMenu();
     const btn = document.getElementById('theme-btn');
     if (btn) {
       btn.addEventListener('click', () => {

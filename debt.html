@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Debt and Interest</title>
+<meta name="description" content="How much governments, households and companies owe in nine economies, what the interest costs, and whether the economy is growing faster than the interest rate, with sources and dates.">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="assets/macro.css?v=20261025">
+<link rel="stylesheet" href="assets/ts-chart.css?v=20261025">
+<link rel="stylesheet" href="assets/debt.css?v=20261025">
+<script src="assets/shell.js?v=20261025"></script><!-- in head so a saved theme is applied before the first paint -->
+<!--
+  Palette checks (dataviz skill, scripts/validate_palette.js), run for both surfaces.
+  No new colour values: every colour is a macro.css token, and a colour follows the economy on every chart.
+
+  Economies in chip and legend order UK, US, Japan, Italy, Canada, China (orange, blue, green, magenta, yellow, aqua):
+    dark on #1a1a19:  lightness PASS, chroma PASS, CVD 8.4 PASS, normal 19.3 PASS, contrast PASS (all >= 3:1)
+    light on #fcfcfb: lightness PASS, chroma PASS, CVD 8.8 PASS, normal 17.5 PASS, contrast PASS
+  The default five (UK, US, Japan, Italy, Canada): CVD 13.0 PASS, normal 19.3 dark and 17.5 light PASS, contrast PASS.
+  The all-pairs test fails for six hues (as the skill documents), and choosing only some economies can make two hues
+  neighbours that this order keeps apart: orange beside green (UK with Japan only) is 2.7 dark and 3.2 light under protan.
+  So identity is never colour alone: every economy has its own end-marker shape, the legend and the filter chips name
+  it, end labels name it where they fit, and every chart has a table twin and a CSV.
+  Germany, France or the euro area, added one at a time, is drawn in ink (--ink), not in a seventh hue; the faint
+  context lines are --faint, and neither is a categorical colour.
+
+  Orange (r above g) and blue (r below g) for the r minus g columns, a polarity pair and not countries:
+    dark:  CVD 26.8 PASS, normal 31.8 PASS, contrast PASS
+    light: CVD 24.7 PASS, normal 33.6 PASS, contrast PASS
+  The key line beside that chart says what each side means, and the column sign is also the readout text.
+-->
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to the page</a>
+
+<header class="appbar">
+  <a class="brand" href="index.html"><span class="brand-dot" aria-hidden="true"></span>Macro Organizm</a>
+  <h1 class="page-title">Debt and Interest</h1>
+  <nav class="appnav" aria-label="Pages">
+    <button class="navmenu-btn" type="button" aria-expanded="false" aria-controls="navlinks"><span class="navmenu-kicker">Menu</span><span class="navmenu-label"></span><span class="navmenu-chev" aria-hidden="true"></span></button>
+    <div class="navlinks" id="navlinks">
+      <div class="navgroup" role="group" aria-label="Money">
+        <a href="index.html" data-desc="Seven numbers and eight claims, tested">Start</a>
+        <a href="money-flow.html" data-desc="How money is created and repaid">Money Flow</a>
+        <a href="monetary-history.html" data-desc="M0 to M4 and 770 years of money">Money Over Time</a>
+        <a href="debt.html" aria-current="page" data-desc="Who owes what, and what it costs">Debt</a>
+        <a href="prices.html" data-desc="What things cost in hours of work">Prices</a>
+      </div>
+      <span class="navdivider" aria-hidden="true"></span>
+      <div class="navgroup" role="group" aria-label="Power">
+        <a href="world-powers.html" data-desc="Ties between states, with sources">Nations</a>
+        <a href="power-structure.html" data-desc="Ownership and funding ties">Power Structure</a>
+      </div>
+    </div>
+  </nav>
+  <span class="spacer"></span>
+  <button class="btn" id="theme-btn" type="button" aria-label="Switch theme">Theme</button>
+</header>
+
+<noscript>
+  <div class="load-error"><h2>JavaScript is required</h2><p>This page draws its charts and tables in the browser.</p></div>
+</noscript>
+
+<div id="load-error" class="load-error" role="alert" hidden>
+  <h2 id="load-error-title">The page could not load</h2>
+  <p id="load-error-detail"></p>
+</div>
+
+<div id="app">
+  <div class="shell shell--single">
+    <main id="main" class="main dp-main" tabindex="-1">
+
+      <div class="dp-intro">
+        <p class="dp-lede">How much governments, households and companies owe, what the interest on it costs, and whether the economy is growing faster than the interest rate. Every figure is a published measurement with its source and date. This page does not say how much debt is too much; economists disagree about that, and both sides are shown.</p>
+        <p class="dp-fine" id="dp-asof"></p>
+        <p class="dp-fine">The economies are the largest advanced economies plus China, chosen for data coverage and not as a representative sample. Low-debt advanced economies such as Australia, Switzerland or Norway are not included. The page starts with the UK, US, Japan, Italy and Canada; Germany, France and the euro area can be added, and the grey lines show the rest.</p>
+        <p class="dp-fine">On any chart, point or touch to read the values for one year. With a keyboard, focus the chart and use the arrow keys (Shift for a year at a time, Home and End to jump, Escape to close). Every chart has a table and a CSV of the same numbers.</p>
+        <p class="dp-fine">Notes under each chart are tagged <b>Accounting fact</b> (a definition or an identity), <b>Measured trend</b> (computed from the data on the page) or <b>Interpretation</b> (a reading people dispute, with the strongest case on each side).</p>
+      </div>
+
+      <div class="toolbar dp-tools" id="dp-tools" role="group" aria-label="Controls for every chart on this page"></div>
+
+      <section class="dp-glance" id="glance" aria-labelledby="glance-title">
+        <h2 id="glance-title">At a glance</h2>
+        <div class="dp-kpis" id="dp-kpis"></div>
+        <p class="dp-fine" id="dp-kpi-note"></p>
+      </section>
+
+      <div class="dp-cards" id="dp-cards"></div>
+
+      <section class="card chartcard dp-card dp-method" id="notes" aria-labelledby="notes-title">
+        <div class="chart-head">
+          <h2 class="chart-title" id="notes-title">Notes, definitions and limits</h2>
+          <p class="chart-sub">What each measure counts, where a series changes basis, and what the page leaves out.</p>
+        </div>
+
+        <div>
+          <h3>Definitions (accounting facts)</h3>
+          <ul>
+            <li><b>Gross and net debt.</b> Gross debt is everything a government owes, including amounts owed to other parts of government. Net debt subtracts the financial assets the government holds. This page shows gross debt only.</li>
+            <li id="def-central-general"><b>Central and general government.</b> Central government is the national treasury. General government adds regional and local governments and, in some countries, social security funds. The IMF historical series uses general government where it has it and central government otherwise, so some series change coverage part-way.</li>
+            <li><b>Credit.</b> The BIS total credit series counts loans and debt securities owed by households, non-financial companies and government to all lenders, at home and abroad. Households and companies are at market value, government at face (nominal) value. Debts of banks and other financial firms, and promises such as pensions, are outside it.</li>
+            <li id="def-primary-balance"><b>Primary balance.</b> Government revenue minus spending other than interest. A positive number is a surplus before interest; a negative one is a deficit before interest. It is the part of the budget that does not depend on the interest rate.</li>
+            <li><b>Fiscal and calendar years.</b> US federal figures follow the fiscal year that ends on 30 September and are keyed by the year in which it ends. They are divided only by series of the same fiscal year. Other economies use calendar years.</li>
+            <li><b>Implied interest rate (r).</b> For the IMF and Eurostat ratios, interest paid and debt are both shares of GDP of their own year, so r = interest(t) / debt(t-1) x (1 + g), where g is nominal GDP growth in year t. For the United States federal basis, r is net interest outlays in fiscal year t divided by debt held by the public at the end of fiscal year t-1, both in dollars.</li>
+            <li id="def-r-minus-g"><b>r minus g and the debt ratio.</b> To a good approximation, the change in debt as a share of GDP in a year is (r - g) / (1 + g) x debt(t-1), minus the primary balance (a surplus counts as positive). Real data also contain other financing and valuation changes, so this identity and the actual change can differ.</li>
+            <li><b>Averages.</b> A 5-year average is the mean of five consecutive years and is left blank if any of the five is missing. A line that breaks means the source has no value for those years; nothing is filled in.</li>
+          </ul>
+        </div>
+
+        <div>
+          <h3>Coverage changes and source switches (measured)</h3>
+          <ul id="dp-breaks"></ul>
+        </div>
+
+        <div>
+          <h3>Notes on the data</h3>
+          <ul id="dp-datanotes"></ul>
+        </div>
+
+        <div>
+          <h3>What this page does not show</h3>
+          <ul>
+            <li>Net debt, the assets a government holds, pension and other unfunded promises, and guarantees.</li>
+            <li>Forecasts. Values after the last actual year in each IMF source are removed from the file, and the outlook database is drawn only to its last actual year. The IMF feed does not flag projections, so the last actual year is taken as the year before the vintage year, and the newest year may still be an estimate.</li>
+            <li>A debt threshold. No level of debt is agreed to be the point where trouble starts, and the page draws none.</li>
+            <li>Debts of banks and other financial firms, which are a different part of the balance sheet from the sectors above.</li>
+            <li>Who holds the debt. Every debt is also someone's asset: households, pension funds, banks, central banks and foreign investors.</li>
+          </ul>
+        </div>
+
+        <details id="dp-series">
+          <summary>Series used on this page, with sources and dates</summary>
+          <div class="tableview" id="dp-series-table" tabindex="0" role="region" aria-label="Series used on this page"></div>
+        </details>
+
+        <div>
+          <h3>See also</h3>
+          <div class="dp-links">
+            <a href="money-flow.html">Money Flow: how money is created and repaid</a>
+            <a href="monetary-history.html">Money Over Time: money supply and 770 years of history</a>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<div id="dialog-root"></div>
+
+<script src="data/debt.js?v=20261025"></script>
+<script src="assets/ui.js?v=20261025"></script>
+<script src="assets/derive.js?v=20261025"></script>
+<script src="assets/ts-chart.js?v=20261025"></script>
+<script src="assets/debt.js?v=20261025"></script>
+</body>
+</html>
